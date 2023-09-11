@@ -88,12 +88,12 @@ while [[ "$1" ]]; do
             AMEND=true
             shift
             ;;
-        -m)
+        -m|--message)
             shift
             MESSAGE="$1"
             shift
             ;;
-        -s)
+        -s|--scope)
             shift
             SCOPE="$1"
             shift
