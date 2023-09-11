@@ -1,28 +1,28 @@
-access|♿|Improvement for accessibility
-api|❗|API addition, deprecation, or deletion
-asset|📸|Add or update assets
-clean|🗑️|Delete, deprecate, prune, or otherwise remove files
-ci|👷|CI config files and scripts
-config|🔧|Change to build configs, scripts, or external dependencies
-data|🗃️|Add or update a Dataset
-doc|📝|Documentation changes including source comments
-extern|👽️|Update due to external API or other changes
-feat|✨|A new feature
-fix|✔️|Fix a bug or get a test working
-git|🙈|A change to the .gitignore / .gitkeep files, or other git changes
-hotfix|🚨|Critical hotfix
-i18n|🌐|Internationalization and localization
-init|🎉|The first commit of a new project or feature
-lint|👕|Lint or other warning clean up
-log|📋|Changes that effect logs
-memo|🌼|Internal memo, status report, or other such documents
-metric|📡|Instrumentation or metrics
-perf|🏃|Improve performance
-refactor|♻️|Improve structure or format of code
-revert|⏪|Reverts a previous commit
-seo|🎌|SEO improvements, A/B tests, or other changes
-test|🦋|Add test or fix test code
-typo|💄|Fix typos, whitespace, or cosmetic change
-ui|🎨|Improve user experience, usability, responsiveness
-version|🔖|Simple marker to tag a version bump
-wip|⚗️|Mark code as stable but still being worked on
+access,♿,"Improvement for accessibility"
+api,❗,"API addition, deprecation, or deletion"
+asset,📸,"Add or update assets"
+clean,🗑️,"Delete, deprecate, prune, or otherwise remove files"
+ci,👷,"CI config files and scripts"
+config,🔧,"Change to build configs, scripts, or external dependencies"
+data,🗃️,"Add or update a Dataset"
+doc,📝,"Documentation changes including source comments"
+extern,👽️,"Update due to external API or other changes"
+feat,✨,"A new feature"
+fix,✔️,"Fix a bug or get a test working"
+git,🙈,"A change to the .gitignore / .gitkeep files, or other git changes"
+hotfix,🚨,"Critical hotfix"
+i18n,🌐,"Internationalization and localization"
+init,🎉,"The first commit of a new project or feature"
+lint,👕,"Lint or other warning clean up"
+log,📋,"Changes that effect logs"
+memo,🌼,"Internal memo, status report, or other such documents"
+metric,📡,"Instrumentation or metrics"
+perf,🏃,"Improve performance"
+refactor,♻️,"Improve structure or format of code"
+revert,⏪,"Reverts a previous commit"
+seo,🎌,"SEO improvements, A/B tests, or other changes"
+test,🦋,"Add test or fix test code"
+typo,💄,"Fix typos, whitespace, or cosmetic change"
+ui,🎨,"Improve user experience, usability, responsiveness"
+version,🔖,"Simple marker to tag a version bump"
+wip,⚗️,"Mark code as stable but still being worked on"
