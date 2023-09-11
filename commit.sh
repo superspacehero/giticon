@@ -59,21 +59,33 @@ else
     init_type "wip" "⚗️" "Mark code as stable but still being worked on"
 fi
 
-# Check for dry run option
-if [[ "$1" == "--dry-run" ]]; then
-    DRY_RUN=true
-    shift
-else
-    DRY_RUN=false
-fi
+# Initialize options and message variable
+DRY_RUN=false
+AMEND=false
+MESSAGE=""
 
-# Check for append to latest commit option
-if [[ "$1" == "--amend" ]]; then
-    AMEND=true
-    shift
-else
-    AMEND=false
-fi
+# Loop to process flags
+while [[ "$1" ]]; do
+    case "$1" in
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --amend)
+            AMEND=true
+            shift
+            ;;
+        -m|--msg)
+            shift
+            MESSAGE="$1"
+            shift
+            ;;
+        *)
+            # If the argument is not a known flag, break the loop
+            break
+            ;;
+    esac
+done
 
 # Check for command line argument for direct type
 if [[ $1 && ${emojis[$1]} ]]; then
@@ -97,8 +109,12 @@ else
     fi
 fi
 
-read -p "Optional scope (e.g. Android): " scope
-read -p "This commit will...(e.g. Let swipe go all the way to bottom): " desc
+if [[ -z "$MESSAGE" ]]; then
+    read -p "Optional scope (e.g. Android): " scope
+    read -p "This commit will...(e.g. Let swipe go all the way to bottom): " desc
+else
+    desc="$MESSAGE"
+fi
 
 # If dry run option is enabled, print the commit message without committing
 if $DRY_RUN; then
