@@ -13,6 +13,18 @@ init_type() {
     order+=("$key")
 }
 
+# Maybe one day I'll work out how to properly use these functions.
+# For now, they're just here for reference.
+# # Function to extract scope from input
+# extract_scope() {
+#     echo "$1" | grep -oP '\(\K[^)]+'
+# }
+
+# # Function to extract message from input
+# extract_message() {
+#     echo "$1" | grep -oP '"\K[^"]+'
+# }
+
 # Get the root directory of the git repository
 GIT_ROOT=$(git rev-parse --show-toplevel)
 DEFAULT_CSV_PATH="$GIT_ROOT/types.csv"
@@ -63,21 +75,27 @@ fi
 DRY_RUN=false
 AMEND=false
 MESSAGE=""
+SCOPE=""
 
 # Loop to process flags
 while [[ "$1" ]]; do
     case "$1" in
-        --dry-run)
+        -d|--dry-run)
             DRY_RUN=true
             shift
             ;;
-        --amend)
+        -a|--amend)
             AMEND=true
             shift
             ;;
-        -m|--msg)
+        -m)
             shift
             MESSAGE="$1"
+            shift
+            ;;
+        -s)
+            shift
+            SCOPE="$1"
             shift
             ;;
         *)
@@ -109,30 +127,38 @@ else
     fi
 fi
 
+# If the MESSAGE is empty, then it's likely the scope might be too.
+# Only ask for them if they haven't been set via the command line.
 if [[ -z "$MESSAGE" ]]; then
-    read -p "Optional scope (e.g. Android): " scope
-    read -p "This commit will...(e.g. Let swipe go all the way to bottom): " desc
+    # Only ask for scope if it hasn't been set by the -s flag.
+    if [[ -z "$SCOPE" ]]; then
+        read -p "Optional scope (e.g. Android): " scope_input
+        SCOPE=${SCOPE:-$scope_input}
+    fi
+
+    read -p "This commit will...(e.g. Let swipe go all the way to bottom): " desc_input
+    desc=${MESSAGE:-$desc_input}
 else
     desc="$MESSAGE"
 fi
 
 # If dry run option is enabled, print the commit message without committing
 if $DRY_RUN; then
-    if [[ -n "$scope" ]]; then
-        echo "${emojis[$selected_type]} $selected_type($scope): $desc"
+    if [[ -n "$SCOPE" ]]; then
+        echo "${emojis[$selected_type]} $selected_type($SCOPE): $desc"
     else
         echo "${emojis[$selected_type]} $selected_type: $desc"
     fi
 else
     if $AMEND; then
-        if [[ -n "$scope" ]]; then
-            git commit --amend -m "${emojis[$selected_type]} $selected_type($scope): $desc"
+        if [[ -n "$SCOPE" ]]; then
+            git commit --amend -m "${emojis[$selected_type]} $selected_type($SCOPE): $desc"
         else
             git commit --amend -m "${emojis[$selected_type]} $selected_type: $desc"
         fi
     else
-        if [[ -n "$scope" ]]; then
-            git commit -m "${emojis[$selected_type]} $selected_type($scope): $desc"
+        if [[ -n "$SCOPE" ]]; then
+            git commit -m "${emojis[$selected_type]} $selected_type($SCOPE): $desc"
         else
             git commit -m "${emojis[$selected_type]} $selected_type: $desc"
         fi
