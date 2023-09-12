@@ -38,7 +38,9 @@ fi
 
 if [[ -f $CSV_PATH ]]; then
     while IFS=',' read -r key emoji description; do
-        init_type "$key" "$emoji" "$description"
+        if [[ "$key" != "Type" ]]; then
+            init_type "$key" "$emoji" "$description"
+        fi
     done < $CSV_PATH
 else
     init_type "access" "♿" "Improvement for accessibility"
