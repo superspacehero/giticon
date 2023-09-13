@@ -1,0 +1,28 @@
+# Scratch folders
+.research/
+.scratch/
+
+# User files
+openide.bat
+.editorconfig
+
+# Nix
+.direnv/
+
+# Home Manager
+.config
+
+# Dotfiles
+.dotfiles
+
+# VScode 
+#.vscode/
+
+# Jetbrains related
+*.ipr
+*.iws
+.idea/*
+out/
+.idea_modules/
+.attach_pid*
+

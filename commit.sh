@@ -13,65 +13,91 @@ init_type() {
     order+=("$key")
 }
 
-# Maybe one day I'll work out how to properly use these functions.
-# For now, they're just here for reference.
-# # Function to extract scope from input
-# extract_scope() {
-#     echo "$1" | grep -oP '\(\K[^)]+'
-# }
-
-# # Function to extract message from input
-# extract_message() {
-#     echo "$1" | grep -oP '"\K[^"]+'
-# }
 
 # Get the root directory of the git repository
 GIT_ROOT=$(git rev-parse --show-toplevel)
-DEFAULT_CSV_PATH="$GIT_ROOT/types.csv"
 
 # Check for a .giticon.rc file
 if [[ -f "$GIT_ROOT/.giticon.rc" ]]; then
-    CSV_PATH=$(cat "$GIT_ROOT/.giticon.rc")
-else
-    CSV_PATH=$DEFAULT_CSV_PATH
+    source "$GIT_ROOT/.giticon.rc"
 fi
 
-if [[ -f $CSV_PATH ]]; then
+if [ -z "$COMMIT_CSV_FILE_PATH" ]; then
+    COMMIT_CSV_FILE_PATH="$GIT_ROOT/giticontypes.csv"
+fi
+
+if [[ -f $COMMIT_CSV_FILE_PATH ]]; then
     while IFS=',' read -r key emoji description; do
         if [[ "$key" != "Type" ]]; then
             init_type "$key" "$emoji" "$description"
         fi
-    done < $CSV_PATH
+    done < "$COMMIT_CSV_FILE_PATH"
 else
-    init_type "access" "♿" "Improvement for accessibility"
-    init_type "api" "❗" "API addition, deprecation, or deletion"
-    init_type "asset" "📸" "Add or update assets"
-    init_type "clean" "🗑️" "Delete, deprecate, prune, or otherwise remove files"
-    init_type "ci" "👷" "CI config files and scripts"
-    init_type "config" "🔧" "Change to build configs, scripts, or external dependencies"
-    init_type "data" "🗃️" "Add or update a Dataset"
-    init_type "doc" "📝" "Documentation changes including source comments"
-    init_type "extern" "👽️" "Update due to external API or other changes"
+    # European Commission Standard with emojis added
+    # echo "COMMIT_CSV_FILE_PATH not found, showing Standard Commit Types instead"
+    echo
     init_type "feat" "✨" "A new feature"
-    init_type "fix" "✔️" "Fix a bug or get a test working"
-    init_type "git" "🙈" "A change to the .gitignore / .gitkeep files, or other git changes"
-    init_type "hotfix" "🚨" "Critical hotfix"
-    init_type "i18n" "🌐" "Internationalization and localization"
-    init_type "init" "🎉" "The first commit of a new project or feature"
-    init_type "lint" "👕" "Lint or other warning clean up"
-    init_type "log" "📋" "Changes that effect logs"
-    init_type "memo" "🌼" "Internal memo, status report, or other such documents"
-    init_type "metric" "📡" "Instrumentation or metrics"
-    init_type "perf" "🏃" "Improve performance"
-    init_type "refactor" "♻️" "Improve structure or format of code"
-    init_type "revert" "⏪" "Reverts a previous commit"
-    init_type "seo" "🎌" "SEO improvements, A/B tests, or other changes"
-    init_type "test" "🦋" "Add test or fix test code"
-    init_type "typo" "💄" "Fix typos, whitespace, or cosmetic change"
-    init_type "ui" "🎨" "Improve user experience, usability, responsiveness"
-    init_type "version" "🔖" "Simple marker to tag a version bump"
-    init_type "wip" "⚗️" "Mark code as stable but still being worked on"
+    init_type "fix" "✔️" "A bug fix"
+    init_type "docs" "📝" "Documentation only changes"
+    init_type "style" "🌼" "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"
+    init_type "refactor" "♻️" "A code change that neither fixes a bug nor adds a feature"
+    init_type "perf" "🏃" "A code change that improves performance"
+    init_type "test" "🦋" "Adding missing tests"
+    init_type "chore" "🧺" "Changes to the build process or auxiliary tools and libraries such as documentation generation"
 fi
+
+
+help()
+{
+    echo -e "
+USAGE: \e[33m\$ ${0##*/} [OPTIONS] [message] [body] [footer]\e[0m
+
+ARGUMENTS
+  [message]   Alternative to combined --type, --scope, and --message flags
+              Use the format: <type>[(<scope>)][!]:<description>
+
+                Where:
+                  - <type> can be found in the .giticon.rc
+                  - <scope> label is within parenthesis
+                  - ! is used to indicate a breaking change
+                  - : separates commit type from description
+                  - <description> completes the sentence, \"Commit will...\"
+
+  [body]      If necessary answer why change was made, or how commit
+              addresses issue, or what effect commit has
+
+  [footer]    Optional meta-data, like: breaking change, issue number, test results
+
+OPTIONS
+  -h, --help      Show command line options and table of commit types
+  -m, --message   Passed through to 'git commit' with prepended type and scope
+      --scope     Scope to prepend to message
+      --type      Commit Type to prepend to message
+
+GIT COMMIT OPTIONS
+
+  Remaining flagged options are passed through to 'git commit', including:
+
+  -a, --all       Commit all changed files
+      --amend     Amend previous commit
+      --dry-run   Show what would be committed
+
+EXAMPLES
+  \e[33m\$ ${0##*/}\e[0m
+
+    Will prompt for commit type, amend option, and description
+
+  \e[33m\$ ${0##*/} \"init: Add files to start project\"\e[0m
+
+    Will make commit with message: \"🎉 init: Add files to start project\"
+
+  \e[33m\$ ${0##*/} --amend init \"Add content to kick off project\"\e[0m
+
+    Git will --amend the last commit with: \"🎉 init: Add content to kick off project\"
+"
+    exit 2
+}
+
 
 # Initialize options and message variable
 DRY_RUN=false
@@ -115,9 +141,10 @@ else
     for i in "${!order[@]}"; do
         type=${order[$i]}
         index=$((i+1))
-        echo "$index) ${emojis[$type]} $type: ${types[$type]}"
+        echo -e "$index) ${emojis[$type]}\t$(printf '%-9s' "$type":) ${types[$type]}"
     done
 
+    # shellcheck disable=SC2162
     read -p "Enter number or type key: " selection
     if [[ $selection =~ ^[0-9]+$ ]]; then
         selected_type=${order[$((selection-1))]}
