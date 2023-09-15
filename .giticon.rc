@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path of active commit type csv file
-COMMIT_CSV_FILE_PATH="giticontypes.csv"
+COMMIT_CSV_FILE="commit_types.csv"
 
 # Add emoji to commit message: Y/N
 ADD_EMOJI="Y"
