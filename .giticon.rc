@@ -12,8 +12,13 @@ PROMPT_FOR_OPTION="N"
 # If prompting add a prompt for breaking change
 PROMPT_FOR_BREAKING="N"
 
-# If flag is not valid: warn/error/ignore
+# Have no spaces between emoji, type, and description,
+# with delimiter either ":" or "!" not "!:"
+SQUEEZE_MESSAGE="Y"
+
+# If flag is not valid: warn/error/ignore; warn
+# will re-prompt if message is over 50 chars
 INVALID_FLAG_ACTION="warn"
 
 # Terminate if warning: Y/N
-TERMINATE_ON_WARNING="Y"
+TERMINATE_ON_WARNING="N"
