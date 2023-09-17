@@ -6,6 +6,12 @@ COMMIT_CSV_FILE="commit_types.csv"
 # Add emoji to commit message: Y/N
 ADD_EMOJI="Y"
 
+# If prompting add a prompt for option
+PROMPT_FOR_OPTION="N"
+
+# If prompting add a prompt for breaking change
+PROMPT_FOR_BREAKING="N"
+
 # If flag is not valid: warn/error/ignore
 INVALID_FLAG_ACTION="warn"
 
