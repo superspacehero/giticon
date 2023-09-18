@@ -33,10 +33,10 @@ tearDown() {
   rm -fr "${temp_dir}"
 }
 
-testShellLocation() {
+testRcNotFound() {
   actual="$("$temp_commit_sh" --version 2>&1)"
 
-  echo "actual = $actual"
+#  echo "actual = $actual"
 
   assertEquals 1002 "$("$temp_commit_sh" --version)" "$actual"
 }
