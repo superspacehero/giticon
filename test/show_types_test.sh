@@ -3,15 +3,15 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
 testShowCommitParam() {
-  actual="$("$commit_sh" --show-commits)"
+  actual="$("$commit_sh" --show-types)"
 
-  assertContains "$actual" "USAGE:"
+  assertContains "$actual" "Icon"
 }
 
 testJParam() {
   actual="$("$commit_sh" -j)"
 
-  assertContains "$actual" "USAGE:"
+  assertContains "$actual" "Icon"
 }
 
 # Load and run shUnit2.
