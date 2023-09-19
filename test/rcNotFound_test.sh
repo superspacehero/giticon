@@ -36,7 +36,7 @@ tearDown() {
 testRcNotFound() {
 
   # Capture the exit code
-  "${temp_dir}"/commit.sh
+  "${temp_dir}"/commit.sh >/dev/null
   exit_code=$?
 
   # Check if the exit code is as expected (102 in this case)
