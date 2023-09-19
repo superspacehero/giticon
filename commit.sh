@@ -8,6 +8,9 @@
 
 show_slim_help()
 {
+  # Parameter
+  p_exit_code=${1:-"2"}
+
   # shellcheck disable=SC2039
   echo "
 USAGE: \e[33m\$ ${0##*/} [-h|--help] [-j|--show-types] [OPTIONS] [ARGUMENTS]\e[0m
@@ -19,7 +22,7 @@ TRY
 "
 
   # Help should go to stderr
-  exit 2
+  exit "$p_exit_code"
 }
 
 show_help()
@@ -94,7 +97,7 @@ show_version()
 VERSION="0.0.1"
 RC_FILE_NAME=".giticon.rc"
 
-ERROR_RC_NOT_FOUND=1002
+ERROR_RC_NOT_FOUND=102
 
 # Attempt to get the project root directory using git
 git_output=$(git rev-parse --show-toplevel 2>/dev/null)
@@ -116,9 +119,7 @@ if [ -f "$rc_file_path" ]; then
 else
   # Show an error and exit
   echo "\e[31m\$ $RC_FILE_NAME not found in project root \e[0m"
-  show_slim_help
-
-  exit $ERROR_RC_NOT_FOUND
+  show_slim_help $ERROR_RC_NOT_FOUND
 fi
 
 # Set the file path for the csv file if it is missing
@@ -132,10 +133,6 @@ if [ "${COMMIT_CSV_FILE#./}" != "$COMMIT_CSV_FILE" ] ||
   # Make it absolute by placing in project root directory
   COMMIT_CSV_FILE="${PROJECT_ROOT}/$COMMIT_CSV_FILE"
 fi
-
-echo "${COMMIT_CSV_FILE#./}"
-echo "basename $COMMIT_CSV_FILE"
-echo "path: $COMMIT_CSV_FILE"
 
 if [ -z "$ADD_EMOJI" ]; then ADD_EMOJI="Y"; fi
 if [ -z "$PROMPT_FOR_OPTION" ]; then PROMPT_FOR_OPTION="N"; fi

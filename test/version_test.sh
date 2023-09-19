@@ -5,11 +5,9 @@ commit_sh="${PROJECT_ROOT}/commit.sh"
 "$PROJECT_ROOT"/commit.sh --version
 
 testVersionParam() {
-  actual="$("$commit_sh" --version)"
+  actual="$("$commit_sh" --version >/dev/null)"
 
-  echo "actual = $actual"
-
-  assertContains 1002 "USAGE" "$actual"
+  assertContains "$actual" ".sh v"
 }
 
 # Load and run shUnit2.
