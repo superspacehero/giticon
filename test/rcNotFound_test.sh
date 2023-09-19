@@ -34,11 +34,13 @@ tearDown() {
 }
 
 testRcNotFound() {
-  actual="$("$temp_commit_sh" --version 2>&1)"
 
-#  echo "actual = $actual"
+  # Run your script or command here and capture the exit code
+  "${temp_dir}"/commit.sh
+  exit_code=$?
 
-  assertEquals 1002 "$("$temp_commit_sh" --version)" "$actual"
+  # Check if the exit code is as expected (102 in this case)
+  assertSame "Expected exit code 102" 102 "$exit_code"
 }
 
 # Load and run shUnit2.
