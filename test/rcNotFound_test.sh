@@ -35,7 +35,7 @@ tearDown() {
 
 testRcNotFound() {
 
-  # Run your script or command here and capture the exit code
+  # Capture the exit code
   "${temp_dir}"/commit.sh
   exit_code=$?
 
