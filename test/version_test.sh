@@ -7,9 +7,7 @@ commit_sh="${PROJECT_ROOT}/commit.sh"
 testVersionParam() {
   actual="$("$commit_sh" --version)"
 
-  echo "----"
   echo "actual = $actual"
-  echo "----"
 
   assertContains 1002 "USAGE" "$actual"
 }
