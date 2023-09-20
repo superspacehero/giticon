@@ -33,7 +33,7 @@ tearDown() {
   rm -fr "${temp_dir}"
 }
 
-testRcNotFound() {
+testRcNotFound_A001() {
 
   # Capture the exit code
   "${temp_dir}"/commit.sh >/dev/null

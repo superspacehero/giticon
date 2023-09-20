@@ -2,13 +2,13 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
-testShowCommitParam() {
+testShowCommitParam_B003() {
   actual="$("$commit_sh" --show-types)"
 
   assertContains "$actual" "Icon"
 }
 
-testJParam() {
+testJParam_B003() {
   actual="$("$commit_sh" -j)"
 
   assertContains "$actual" "Icon"

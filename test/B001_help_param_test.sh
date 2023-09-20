@@ -2,13 +2,13 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
-testHelpParam() {
+testHelpParam_B001() {
   actual="$("$commit_sh" --help)"
 
   assertContains "$actual" "USAGE:"
 }
 
-testHParam() {
+testHParam_B001() {
   actual="$("$commit_sh" -h)"
 
   assertContains "$actual" "USAGE:"
