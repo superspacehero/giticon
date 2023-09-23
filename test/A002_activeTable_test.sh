@@ -10,7 +10,7 @@ testActiveTable_initialized_A002() {
 
   result=$(echo $active_table | head -c10)
 
-  assertTrue "active_table is set, $result" "[ -z $result ]"
+  assertTrue "active_table is set, $result" "[ -n $result ]"
 }
 
 # Load and run shUnit2.
