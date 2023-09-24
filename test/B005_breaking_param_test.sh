@@ -2,10 +2,19 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
-testBodyAndEndArgs_C001() {
-  actual="$("$commit_sh" --type hotfix -m \"Correct crashing issue#5218\" --breaking)"
+export test_only
 
-  assertContains "$actual" "!"
+testBreakingFlagB005() {
+
+  test_only=true
+
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
+
+  run_init
+  run_stage_A_1_2 "--breaking"
+
+  assertTrue "is_flag_breaking is true" "$is_flag_breaking"
 }
 
 # Load and run shUnit2.
