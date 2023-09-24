@@ -7,8 +7,8 @@ setUpOutputDirs(){
   original_pwd="${PWD}"
   OUTPUT_DIR="${SHUNIT_TMPDIR}/output"
   mkdir "${OUTPUT_DIR}"
-  STDOUTF="${OUTPUT_DIR}/stdout"
-  STDERRF="${OUTPUT_DIR}/stderr"
+#  STDOUTF="${OUTPUT_DIR}/stdout"
+#  STDERRF="${OUTPUT_DIR}/stderr"
 }
 
 #assertCommandSuccess() {
