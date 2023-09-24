@@ -6,21 +6,23 @@ testNo_global_table_row_number_U001() {
 
   test_only=true
 
-  . $commit_sh
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
 
   unset table_row_number
 
   # Call with no params
   result=$(set_commit_variables)
 
-  assertContains "$result" "$result" "type"
+  assertContains "$result" "$result" "error"
 }
 
 testNo_global_active_table_U001() {
 
   test_only=true
 
-  . $commit_sh
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
 
   unset active_table p_wanted_row_number
 
@@ -33,7 +35,8 @@ testBad_param_U001() {
 
   test_only=true
 
-  . $commit_sh
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
 
   # Call with bad param
   result=$(set_commit_variables "333")
@@ -45,14 +48,13 @@ testFind_row_1_U001() {
 
   test_only=true
 
-  . $commit_sh
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
 
-  echo "active_table: $active_table"
+  set_commit_variables "1"
 
-  # Call with bad param
-  result=$(set_commit_variables "1")
-
-  assertContains "$result" "$result" "error"
+  assertTrue "commit variables are set, $commit_index, $commit_icon, $commit_type" \
+    "[ -n $commit_index ] && [ -n $commit_type ]"
 }
 
 
