@@ -1,25 +1,15 @@
 #!/bin/sh
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
-commit_sh="${PROJECT_ROOT}/commit.sh"
-
-export test_only
-
-
-#!/bin/sh
-PROJECT_ROOT=$(git rev-parse --show-toplevel)
-
-temp_dir="$SHUNIT_TMPDIR/shellLocation_test"
-temp_commit_sh="${temp_dir}/commit.sh"
-
-
 
 testInvalidParams_B002() {
-  actual="$("$temp_commit_sh" --version)"
 
-#  echo "actual = $actual"
-  show_slim_help
+  error_num=104
 
-  assertEquals 1002 "$("$temp_commit_sh" --version)" "$actual"
+  # Capture the exit code
+  "${PROJECT_ROOT}"/commit.sh --verj >/dev/null
+  exit_code=$?
+
+  assertSame "Expected exit code, $error_num" "$error_num" "$exit_code"
 }
 
 # Load and run shUnit2.
