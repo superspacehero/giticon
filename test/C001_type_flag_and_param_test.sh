@@ -14,7 +14,9 @@ testTypeFlag_C001() {
   run_init
   run_stage_A_1_2 "--type" "hotfix"
 
+  # shellcheck disable=SC2154
   assertTrue "is_flag_type is true" "$is_flag_type"
+  # shellcheck disable=SC2154
   assertContains "flag_type contains \"hotfix\"" "$flag_type" "hotfix"
 }
 
