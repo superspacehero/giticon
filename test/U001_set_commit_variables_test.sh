@@ -2,6 +2,8 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
+export test_only
+
 testNo_global_table_row_number_U001() {
 
   test_only=true
@@ -53,6 +55,7 @@ testFind_row_1_U001() {
 
   set_commit_variables "1"
 
+  # shellcheck disable=SC2154
   assertTrue "commit variables are set, $commit_index, $commit_icon, $commit_type" \
     "[ -n $commit_index ] && [ -n $commit_type ]"
 }
