@@ -57,6 +57,5 @@ testFind_row_1_U001() {
     "[ -n $commit_index ] && [ -n $commit_type ]"
 }
 
-
 # Load and run shUnit2.
 . shunit2
