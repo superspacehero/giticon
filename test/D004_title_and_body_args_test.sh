@@ -4,7 +4,7 @@ commit_sh="${PROJECT_ROOT}/commit.sh"
 
 export test_only
 
-testTitle_and_BodyArg_D004() {
+testTitleAndBodyArgs_D004() {
   # shellcheck disable=SC2034
   test_only=true
 
@@ -17,7 +17,7 @@ testTitle_and_BodyArg_D004() {
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"
   # shellcheck disable=SC2154
-  assertEquals "argument_1 equals \"\"" "" "$argument_1"
+  assertEquals "argument_1 equals \"\"" "do something" "$argument_1"
   # shellcheck disable=SC2154
   assertTrue "is_argument_2 is true" "$is_argument_2"
   # shellcheck disable=SC2154
