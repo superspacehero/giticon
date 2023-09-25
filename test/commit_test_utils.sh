@@ -23,7 +23,7 @@ show_Stage_A_vars() {
   echo "          arg_title: $arg_title"
   echo "          arg_scope: $arg_scope"
   echo "           arg_type: $arg_type"
-  echo "       arg_breaking: $arg_breaking"
+  echo "      arg_delimiter: $arg_delimiter"
   echo "           arg_body: $arg_body"
   echo "            arg_end: $arg_end"
   echo "  git_commit_params: $git_commit_params"
