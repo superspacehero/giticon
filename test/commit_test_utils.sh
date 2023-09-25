@@ -1,7 +1,9 @@
 #!/bin/sh
+# shellcheck disable=SC2154
 
 export test_only
 
+# shellcheck disable=SC2034
 debug_this=true
 
 if [ -z "$test_only" ]; then
