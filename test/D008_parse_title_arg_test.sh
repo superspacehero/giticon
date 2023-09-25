@@ -12,7 +12,7 @@ testParseLoneTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false
@@ -26,7 +26,7 @@ testParseTypeDelimiterTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false
@@ -40,7 +40,7 @@ testParseScopeDelimiterTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false
@@ -54,7 +54,7 @@ testParseScopeNoDelimiterTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false
@@ -68,7 +68,7 @@ testParseIconTypeTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false
@@ -82,7 +82,7 @@ testParseIconTypeScopeDelimiterTitle_D008() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something" "why we did it" "id:5"
+  run_stage_A_1 "do something" "why we did it" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" false

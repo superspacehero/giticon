@@ -12,7 +12,7 @@ testBodyArg_D002() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "--" "why we did it"
+  run_stage_A_1 "--" "why we did it"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"

@@ -12,7 +12,7 @@ testTypeFlag_C001() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "--type" "hotfix"
+  run_stage_A_1 "--type" "hotfix"
 
   # shellcheck disable=SC2154
   assertTrue "is_flag_type is true" "$is_flag_type"

@@ -12,7 +12,7 @@ testEndArg_D003() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "--" "--" "id:5"
+  run_stage_A_1 "--" "--" "id:5"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"

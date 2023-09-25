@@ -12,7 +12,7 @@ testBreakingFlagB005() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "--breaking"
+  run_stage_A_1 "--breaking"
 
   # shellcheck disable=SC2154
   assertTrue "is_flag_breaking is true" "$is_flag_breaking"

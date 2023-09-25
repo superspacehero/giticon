@@ -10,7 +10,7 @@ testTitleArg_D006() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2 "do something"
+  run_stage_A_1 "do something"
 
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"

@@ -12,7 +12,7 @@ testNo_global_table_row_number_U001() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2
+  run_stage_A_1
 
   unset table_row_number
 
@@ -30,7 +30,7 @@ testNo_global_active_table_U001() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2
+  run_stage_A_1
 
   unset active_table p_wanted_row_number
 
@@ -47,7 +47,7 @@ testBad_param_U001() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2
+  run_stage_A_1
 
   # Call with bad param
   result=$(set_commit_variables "333")
@@ -63,7 +63,7 @@ testFind_row_1_U001() {
   . "$commit_sh"
 
   run_init
-  run_stage_A_1_2
+  run_stage_A_1
 
   set_commit_variables "1"
 
