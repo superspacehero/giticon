@@ -3,11 +3,19 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
 testTitleArg_C006() {
-  actual="$("$commit_sh" "do something")"
+  test_only=true
 
-  expecting="git commit -m "do something
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
 
-  assertContains "$actual" "!"
+  run_init
+  run_stage_A_1_2 "do something"
+
+  # shellcheck disable=SC2154
+  assertTrue "is_argument_1 is true" "$is_argument_1"
+  # shellcheck disable=SC2154
+  assertEquals "argument_1 equals \"do something\"" "$argument_1" "do something"
+
 }
 
 # Load and run shUnit2.
