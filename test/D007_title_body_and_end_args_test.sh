@@ -4,7 +4,7 @@ commit_sh="${PROJECT_ROOT}/commit.sh"
 
 export test_only
 
-testTitleBodyAndEndArgs_D006() {
+testTitleBodyAndEndArgs_D007() {
   # shellcheck disable=SC2034
   test_only=true
 
