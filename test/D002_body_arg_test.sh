@@ -2,6 +2,8 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
+export test_only
+
 testBodyArg_D002() {
   # shellcheck disable=SC2034
   test_only=true
@@ -15,15 +17,13 @@ testBodyArg_D002() {
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"
   # shellcheck disable=SC2154
-  assertEquals "argument_1 equals \"\"" "$argument_1" ""
+  assertEquals "argument_1 equals \"\"" "" "$argument_1"
   # shellcheck disable=SC2154
   assertTrue "is_argument_2 is true" "$is_argument_2"
   # shellcheck disable=SC2154
-  assertEquals "argument_2 equals \"\"" "$argument_2" "why we did it"
+  assertEquals "argument_2 equals \"\"" "why we did it" "$argument_2"
   # shellcheck disable=SC2154
-  assertTrue "is_argument_3 is false" "$is_argument_3"
-  # shellcheck disable=SC2154
-  assertEquals "argument_3 equals \"\"" "$argument_3" ""
+  assertFalse "is_argument_3 is false" "$is_argument_3"
 }
 
 # Load and run shUnit2.
