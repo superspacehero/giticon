@@ -3,6 +3,7 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel)
 commit_sh="${PROJECT_ROOT}/commit.sh"
 
 testTitleArg_C006() {
+  # shellcheck disable=SC2034
   test_only=true
 
   # shellcheck source=${PROJECT_ROOT}/commit.sh
