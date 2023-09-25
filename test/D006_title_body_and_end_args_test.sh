@@ -17,13 +17,13 @@ testTitleBodyAndEndArgs_D006() {
   # shellcheck disable=SC2154
   assertTrue "is_argument_1 is true" "$is_argument_1"
   # shellcheck disable=SC2154
-  assertEquals "argument_1 equals \"\"" "" "$argument_1"
+  assertEquals "argument_1 equals \"\"" "do something" "$argument_1"
   # shellcheck disable=SC2154
   assertTrue "is_argument_2 is true" "$is_argument_2"
   # shellcheck disable=SC2154
   assertEquals "argument_2 equals \"\"" "why we did it" "$argument_2"
   # shellcheck disable=SC2154
-  assertFalse "is_argument_3 is true" "$is_argument_3"
+  assertTrue "is_argument_3 is true" "$is_argument_3"
   # shellcheck disable=SC2154
   assertEquals "argument_3 equals \"\"" "id:5" "$argument_3"
 }
