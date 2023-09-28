@@ -151,17 +151,40 @@ testParseIconTypeScopeDelimiterTitle_D008() {
   assertEquals "> $test : title equals \"$expected" "$expected" "$actual"
 }
 
-#distill "🚨 hotfix:do something"
-#distill "⚗️ wip:do something"
-#distill "hotfix"
-#distill "do something"
-#distill "hotfix!Fix null ptr"
-#distill "feat (Android):Add pinch zoom"
-#distill "feat (Android) Add double tap zoom"
-#distill "(Android)"
-#distill "!"
-#distill ":"
+reconstitute() {
+  distill_arg_1 "$1"
 
+  outstr=""
+
+  if [ -n "$arg_delimiter" ]; then outstr="$arg_delimiter"; else outstr=""; fi
+  if [ -n "$arg_title" ] && [ -n "$arg_delimiter" ]; then outstr="$outstr "; fi
+  if [ -n "$arg_title" ]; then outstr="$outstr$arg_title"; fi
+  if [ -n "$arg_scope" ] && [ -z "$arg_delimiter" ] && [ -n "$arg_title" ]; then outstr=" $outstr"; fi
+  if [ -n "$arg_scope" ]; then outstr="($arg_scope)$outstr"; fi
+  if [ -n "$arg_type" ] && [ -n "$arg_scope" ]; then outstr=" $outstr"; fi
+  if [ -n "$arg_type" ]; then outstr="$arg_type$outstr"; fi
+  if [ -n "$arg_icon" ]; then outstr="$arg_icon $outstr"; fi
+
+  echo "$outstr"
+
+  unset outstr
+}
+
+testQuickReconstitute_D008() {
+  # shellcheck disable=SC2034
+  test_only=true
+
+  assertEquals "🚨 hotfix: do something" "$(reconstitute "🚨 hotfix: do something")"
+  assertEquals "⚗️ wip: do something" "$(reconstitute "⚗️ wip: do something")"
+  assertEquals "hotfix" "$(reconstitute "hotfix")"
+  assertEquals "do something" "$(reconstitute "do something")"
+  assertEquals "hotfix! Fix null ptr" "$(reconstitute "hotfix! Fix null ptr")"
+  assertEquals "feat (Android): Add pinch zoom" "$(reconstitute "feat (Android): Add pinch zoom")"
+  assertEquals "feat (Android) Add double tap zoom" "$(reconstitute "feat (Android) Add double tap zoom")"
+  assertEquals "(Android)" "$(reconstitute "(Android)")"
+  assertEquals "!" "$(reconstitute "!")"
+  assertEquals ":" "$(reconstitute ":")"
+}
 
 # Load and run shUnit2.
 . shunit2
