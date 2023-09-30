@@ -1,16 +1,15 @@
 #!/bin/sh
 # shellcheck disable=SC2154
 
-export test_only
-
-# shellcheck disable=SC2034
-debug_this=true
-
-if [ -z "$test_only" ]; then
-  true
-fi
+# Temporarily insert into the code to debug:
+#
+#    . ./commit_test_utils.sh
+#    show_Stage_A_vars
+#    echo
+#    show_Stage_B_vars
 
 show_Stage_A_vars() {
+  echo
   echo "Stage A Variables"
   echo "       is_flag_help: $is_flag_help"
   echo "   is_flag_breaking: $is_flag_breaking"
@@ -22,10 +21,17 @@ show_Stage_A_vars() {
   echo "         flag_scope: $flag_scope"
   echo "       is_flag_type: $is_flag_type"
   echo "          flag_type: $flag_type"
-  echo "          arg_title: $arg_title"
-  echo "          arg_scope: $arg_scope"
+  echo "       was_prompted: $was_prompted"
+  echo "        prompt_icon: $prompt_icon"
+  echo "        prompt_type: $prompt_type"
+  echo "       prompt_scope: $prompt_scope"
+  echo "    prompt_breaking: $prompt_breaking"
+  echo "       prompt_title: $prompt_title"
+  echo "           arg_icon: $arg_icon"
   echo "           arg_type: $arg_type"
+  echo "          arg_scope: $arg_scope"
   echo "      arg_delimiter: $arg_delimiter"
+  echo "          arg_title: $arg_title"
   echo "           arg_body: $arg_body"
   echo "            arg_end: $arg_end"
   echo "  git_commit_params: $git_commit_params"
@@ -34,12 +40,13 @@ show_Stage_A_vars() {
 
 show_Stage_B_vars() {
   echo "Stage B Variables"
-  echo " icon: $options_icon"
-  echo " type: $options_type"
-  echo "scope: $options_scope"
-  echo "  del: $options_delimiter"
-  echo " desc: $message_title"
-  echo " body: $message_body"
-  echo "  end: $message_end"
-  echo "  git: $git_commit_params"
+  echo "    icon: $options_icon"
+  echo "    type: $options_type"
+  echo "   scope: $options_scope"
+  echo "     del: $options_delimiter"
+  echo "    desc: $message_title"
+  echo "    body: $message_body"
+  echo "     end: $message_end"
+  echo "     git: $git_commit_params"
+  echo "prompted: $was_prompted"
 }
