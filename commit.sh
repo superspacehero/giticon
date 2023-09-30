@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck disable=SC2034
+# Remove shellcheck when coding
 
 #########
 #
@@ -61,13 +63,13 @@ USAGE: \e[33m\$ ${0##*/} [OPTIONS] [title] [body] [end]\e[0m
 ARGUMENTS
   [title]          Alternative to combined --type, --scope, and --message flags
 
-                   Use the format: <type>[(<scope>)][!]:<description>
+                   Use the format: <type>[(<scope>)][!|:]<description>
 
                      Where:
                        - <type> can be found in the .giticon.rc
                        - <scope> label is within parenthesis
                        - ! is used to indicate a breaking change
-                       - : separates commit type from description
+                       - : is used to separate commit type from description when no scope
                        - <description> completes the sentence, \"Commit will...\"
 
   [body]           If necessary, answer why change was made, or how commit
@@ -157,7 +159,7 @@ show_version()
 # arguments can be passed:
 #
 #   flag_message
-#   flag_commit_type
+#   flag_type
 #   flag_scope
 #   is_flag_breaking
 #
@@ -181,9 +183,9 @@ show_version()
 # If script is called with no given message, then the user
 # will be prompted and the following variables may be set:
 #
-#   was_prompted (true/false)
-#   prompt_commit_type
-#   prompt_commit_icon
+#   was_prompted
+#   prompt_type
+#   prompt_icon
 #   prompt_scope
 #   prompt_breaking
 #   prompt_title
@@ -247,7 +249,7 @@ init_available_options() {
 #   COMMIT_CSV_FILE
 #   INVALID_FLAG_ACTION
 #   PROJECT_ROOT
-#   PROMPT_FOR_OPTION
+#   PROMPT_FOR_SCOPE
 #   PROMPT_FOR_BREAKING
 #   PROMPT_FOR_BODY
 #   PROMPT_FOR_END
@@ -296,7 +298,7 @@ init_environment() {
   fi
 
   if [ -z "$ADD_EMOJI" ]; then ADD_EMOJI="Y"; fi
-  if [ -z "$PROMPT_FOR_OPTION" ]; then PROMPT_FOR_OPTION="N"; fi
+  if [ -z "$PROMPT_FOR_SCOPE" ]; then PROMPT_FOR_SCOPE="N"; fi
   if [ -z "$PROMPT_FOR_BREAKING" ]; then PROMPT_FOR_BREAKING="N"; fi
   if [ -z "$PROMPT_FOR_BODY" ]; then PROMPT_FOR_BODY="N"; fi
   if [ -z "$PROMPT_FOR_END" ]; then PROMPT_FOR_END="N"; fi
@@ -305,7 +307,7 @@ init_environment() {
   if [ -z "$TERMINATE_ON_WARNING" ]; then TERMINATE_ON_WARNING="Y"; fi
 
   ADD_EMOJI=$(echo $ADD_EMOJI | tr '[:upper:]' '[:lower:]')
-  PROMPT_FOR_OPTION=$(echo $PROMPT_FOR_OPTION | tr '[:upper:]' '[:lower:]')
+  PROMPT_FOR_SCOPE=$(echo $PROMPT_FOR_SCOPE | tr '[:upper:]' '[:lower:]')
   PROMPT_FOR_BREAKING=$(echo $PROMPT_FOR_BREAKING | tr '[:upper:]' '[:lower:]')
   PROMPT_FOR_BODY=$(echo $PROMPT_FOR_BODY | tr '[:upper:]' '[:lower:]')
   PROMPT_FOR_END=$(echo $PROMPT_FOR_END | tr '[:upper:]' '[:lower:]')
@@ -316,15 +318,15 @@ init_environment() {
 
 init_instruction_data() {
   was_prompted=false
-  prompt_commit_type=""
-  prompt_commit_icon=""
+  prompt_type=""
+  prompt_icon=""
   prompt_scope=""
   prompt_breaking=""
   prompt_title=""
   prompt_body=""
   prompt_end=""
   flag_message=""
-  flag_commit_type=""
+  flag_type=""
   flag_scope=""
   is_flag_breaking=false
   is_flag_help=false
@@ -360,10 +362,10 @@ init_working_variables() {
 
   # active_table
   set_table_backup_csv
-  set_table_configured "$COMMIT_CSV_FILE" "$backup_csv"
+  set_active_table "$COMMIT_CSV_FILE" "$backup_csv"
 
   # row_count
-  set_table_rows_count
+  set_row_count
 
   # width_of_index
   set_string_length "$row_count"
@@ -482,7 +484,7 @@ set_table_row_number_from_type() {
   unset p_commit_type_name temp_num
 }
 
-set_table_configured() {
+set_active_table() {
   # Parameters
   p_csv_file="$1"
   p_backup_data="$2"
@@ -629,11 +631,6 @@ set_git_commit_message() {
   unset p_title p_body p_end message_title_with_type
 }
 
-set_is_valid() {
-  # Parameter
-  p_target="$1"
-}
-
 set_type_string_max_width() {
   type_string_max_width=4
 
@@ -689,7 +686,7 @@ set_message_title_with_type() {
   unset p_title
 }
 
-set_table_rows_count() {
+set_row_count() {
   row_count=$(($(printf "%s" "$active_table" | tr -cd '.\n' | wc -l) + 1))
 }
 
@@ -1063,13 +1060,16 @@ distill_arg_1() {
     fi
   fi
 
-#  echo "$arg_1"
-#  echo "     arg_icon: $arg_icon"
-#  echo "     arg_type: $arg_type"
-#  echo "    arg_scope: $arg_scope"
-#  echo "arg_delimiter: $arg_delimiter"
-#  echo "    arg_title: $arg_title"
-#  echo "$arg_icon $arg_type $arg_scope $arg_delimiter $arg_title"
+  if [ -n "$arg_title" ] && [ -z "$arg_type" ] && [ -z "$arg_scope" ] && [ -z "$arg_delimiter" ]; then
+    if [ -n "${arg_title##* *}" ]; then
+      set_table_row_number_from_type "$arg_title"
+
+      if [ "$table_row_number" -ge 1 ]; then
+        arg_type=$arg_title
+        arg_title=""
+      fi
+    fi
+  fi
 }
 
 # distill_message_args will set:
@@ -1090,12 +1090,10 @@ distill_message_args() {
   fi
 
   if [ -n "$argument_2" ]; then
-    # shellcheck disable=SC2034
     arg_body=$argument_2
   fi
 
   if [ -n "$argument_3" ]; then
-    # shellcheck disable=SC2034
     arg_end=$argument_3
   fi
 }
@@ -1111,25 +1109,21 @@ prompt_for_breaking() {
   read -r word
   case $word in
     [Yy]* )
-      if [ "$SQUEEZE_MESSAGE" = "y" ]; then
-        message_delimiter="!"
-      else
-        message_delimiter="!:"
-      fi
+      prompt_breaking="!"
       ;;
     * )
-      message_delimiter=":"
+      prompt_breaking=""
   esac
 }
 
-prompt_for_message() {
+prompt_for_title() {
   echo
   # shellcheck disable=SC2039
-  printf "Finish the sentence, \"This commit will ..."
+  printf "Finish the sentence: This commit will... "
   read -r desc_input
   echo
 
-  message_title="$desc_input"
+  prompt_title="$desc_input"
 }
 
 prompt_for_scope() {
@@ -1139,13 +1133,14 @@ prompt_for_scope() {
   read -r scope_input
   echo
 
-  message_scope="$scope_input"
+  prompt_scope="$scope_input"
   case "$scope_input" in
     (*\(*\)*)
-      echo "The string is surrounded by parentheses."
+      # The string is surrounded by parentheses
+      prompt_scope=$(echo "$scope_input" | sed -n 's/\x28 *\(.*\) *\x29/\1/p')
       ;;
     *)
-      echo "The string is not surrounded by parentheses."
+      prompt_scope="$scope_input"
       ;;
   esac
 }
@@ -1160,7 +1155,6 @@ prompt_for_type() {
     # shellcheck disable=SC2039
     printf "Row number or Commit Type: "
     read -r selection
-    echo
 
     # Check for 'q'
     if [ "$selection" = "q" ]; then exit 0; fi
@@ -1185,29 +1179,57 @@ prompt_for_type() {
     is_valid_type=true
   done
 
-  prompt_commit_type=commit_type
-  prompt_commit_icon=commit_icon
+  prompt_type="$commit_type"
+  prompt_icon="$commit_icon"
 
   unset selection
 }
 
 prompt_for_missing_data() {
 
-#    prompt_commit_type=""
-#    prompt_commit_icon=""
-#    prompt_scope=""
-#    prompt_breaking=""
-#    prompt_title=""
-#    prompt_body=""
-#    prompt_end=""
+  prompt_for_type=false
+  prompt_for_scope=false
+  prompt_for_breaking=false
+  prompt_for_title=false
+  prompt_for_body=false
+  prompt_for_end=false
 
-  if ! $is_flag_message && [ -z "$arg_title" ]; then
-    prompt_for_type
-    if [ "$PROMPT_FOR_OPTION" = "y" ]; then prompt_for_scope; fi
-    if [ "$PROMPT_FOR_BREAKING" = "y" ]; then prompt_for_breaking; fi
-    prompt_for_message
-  
-    was_prompted=true
+  if [ -z "$flag_type" ] && [ -z "$arg_type" ]; then prompt_for_type=true; fi
+
+  if [ "$PROMPT_FOR_SCOPE" = "y" ]; then
+    if [ -z "$flag_scope" ] && [ -z "$arg_scope" ]; then prompt_for_scope=true; fi
+  fi
+
+  if [ "$PROMPT_FOR_BREAKING" = "y" ]; then
+    if ! $is_flag_breaking && [ -z "$arg_delimiter" ]; then prompt_for_breaking=true; fi
+  fi
+
+  if [ -z "$flag_message" ] && [ -z "$arg_title" ]; then prompt_for_title=true; fi
+
+  if [ "$PROMPT_FOR_BODY" = "y" ]; then
+    # Current no $flag_body
+    if [ -z "$arg_body" ]; then prompt_for_body=true; fi
+  fi
+
+  if [ "$PROMPT_FOR_END" = "y" ]; then
+    # Current no $flag_end
+    if [ -z "$arg_end" ]; then prompt_for_end=true; fi
+  fi
+
+  # Only prompt if we don't have redirected input
+  if [ -t 0 ]; then
+    if [ $prompt_for_type ]; then prompt_for_type; fi
+    if [ $prompt_for_scope ]; then prompt_for_scope; fi
+    if [ $prompt_for_breaking ]; then prompt_for_breaking; fi
+    if [ $prompt_for_title ]; then prompt_for_title; fi
+#    if [ $prompt_for_body ]; then true; fi  # TODO: Add body prompt
+#    if [ $prompt_for_end ]; then true; fi  # TODO: Add end prompt
+
+    if [ $prompt_for_type ] || [ $prompt_for_scope ] || \
+       [ $prompt_for_breaking ] || [ $prompt_for_title ] || \
+       [ $prompt_for_body ] || [ $prompt_for_end ]; then
+      was_prompted=true
+    fi
   fi
 }
 
@@ -1229,43 +1251,100 @@ prompt_for_missing_data() {
 #
 consolidate_parsed_data() {
 
-  # TODO: pick it up here...
-  true
+  # Stage A should provide:
+  #   flag_message
+  #   flag_type
+  #   flag_scope
+  #   is_flag_breaking
+  #   git_commit_params
+  #
+  #   arg_icon
+  #   arg_type
+  #   arg_scope
+  #   arg_delimiter
+  #   arg_title
+  #   arg_body
+  #   arg_end
 
-  # Stage A should provide the following variables:
-#  is_flag_breaking=false
-#  is_flag_message=false
-#  flag_message=""
-#  is_flag_scope=false
-#  flag_scope=""
-#  is_flag_type=false
-#  flag_type=""
-##  arg_scope
-##  arg_type
-##  arg_delimiter
-##  arg_title
-##  arg_body
-##  arg_end
-##  git_commit_params
-##  bad_commit_params
-#
-##  if [ $is_flag_type ] && is icon
-#
-#  echo "a: $message_delimiter"
-#  echo "b: $message_scope"
-#  echo "c: $message_title"
-#  echo "d: $message_body"
-#  echo "e: $message_end"
-#  echo "f: $flag_message"
-#  echo "g: $arg_title"
-#
-#  options_icon=""
-#  options_type=""
-#  options_scope=""
-#  options_delimiter=""
-#  message_title=""
-#  message_body=""
-#  message_end=""
+  # options_icon
+  if [ -n "$prompt_icon" ]; then
+    options_icon="$prompt_icon"
+  elif [ -n "$arg_icon" ]; then
+    options_icon="$arg_icon"
+  else
+    options_icon=""
+  fi
+
+  # options_type
+  if [ -n "$prompt_type" ]; then
+    options_type="$prompt_type"
+  elif [ -n "$arg_type" ]; then
+    options_type="$arg_type"
+  elif [ -n "$flag_type" ]; then
+    options_type="$flag_type"
+  else
+    options_type=""
+  fi
+
+  # options_scope
+  if [ -n "$prompt_scope" ]; then
+    options_scope="$prompt_scope"
+  elif [ -n "$arg_scope" ]; then
+    options_scope="$arg_scope"
+  elif [ -n "$flag_scope" ]; then
+    options_scope="$flag_scope"
+  else
+    options_scope=""
+  fi
+
+  # options_delimiter
+  if [ -n "$prompt_breaking" ]; then
+    options_delimiter="$prompt_breaking"
+  elif [ -n "$arg_delimiter" ]; then
+    options_delimiter="$arg_delimiter"
+  elif $is_flag_breaking; then
+    options_delimiter="!"
+  else
+    options_delimiter=""
+  fi
+
+  # message_title
+  if [ -n "$prompt_title" ]; then
+    message_title="$prompt_title"
+  elif [ -n "$arg_title" ]; then
+    message_title="$arg_title"
+  elif [ -n "$flag_message" ]; then
+    message_title="$flag_message"
+  else
+    message_title=""
+  fi
+
+  # message_body
+  if [ -n "$prompt_body" ]; then
+    message_body="$prompt_body"
+  elif [ -n "$arg_title" ]; then
+    message_body="$arg_body"
+  else
+    message_body=""
+  fi
+
+  # message_end
+  if [ -n "$prompt_end" ]; then
+    message_end="$prompt_end"
+  elif [ -n "$arg_end" ]; then
+    message_end="$arg_end"
+  else
+    message_end=""
+  fi
+
+  # Now set the delimiter if it needed
+  if [ -z "$options_delimiter" ]; then
+    if [ -n "$options_type" ] && [ -z "$options_scope" ] && [ -n "$message_title" ]; then
+      options_delimiter=":"
+    fi
+  fi
+
+  # git_commit_params already set
 }
 
 
@@ -1285,55 +1364,27 @@ set_git_commit_string() {
   #   message_end
   #   git_commit_params
 
+  if [ "$SQUEEZE_MESSAGE" = "y" ]; then sp=""; else sp=" "; fi
+
+  outstr=""
+
+  if [ -n "$options_delimiter" ]; then outstr="$options_delimiter"; else outstr=""; fi
+  if [ -n "$message_title" ] && [ -n "$options_delimiter" ]; then outstr="$outstr$sp"; fi
+  if [ -n "$message_title" ]; then outstr="$outstr$message_title"; fi
+  if [ -n "$options_scope" ] && [ -z "$options_delimiter" ] && [ -n "$message_title" ]; then outstr="$sp$outstr"; fi
+  if [ -n "$options_scope" ]; then outstr="($options_scope)$outstr"; fi
+  if [ -n "$options_type" ] && [ -n "$options_scope" ]; then outstr="$sp$outstr"; fi
+  if [ -n "$options_type" ]; then outstr="$options_type$outstr"; fi
+  if [ -n "$options_icon" ]; then outstr="$options_icon$sp$outstr"; fi
+
   message=""
+  if [ -n "$outstr" ]; then message="-m \"$outstr\""; fi
 
-  if [ -n "$message_end" ]; then
-    message=$(printf "\n\n%s" "$message_end")
-  fi
+  git_commit_string=""
 
-  if [ -n "$message_body" ]; then
-    message=$(printf "\n\n%s%s" "$message_body" "$message")
-  else
-    message=$(printf "\n\n%s" "$message")
-  fi
-
-  if [ -n "$message_title" ]; then
-    message=$(printf "%s%s" "$message_title" "$message")
-  fi
-
-  pre_message=""
-
-  if [ -n "$options_icon" ] && [ "$ADD_EMOJI" = "y" ]; then
-    if [ "$SQUEEZE_MESSAGE" = "y" ]; then
-      pre_message=$(printf "%s%s" "$pre_message" "$options_icon")
-    else
-      pre_message=$(printf "%s%s " "$pre_message" "$options_icon")
-    fi
-  fi
-
-  if [ -n "$options_type" ]; then
-    pre_message=$(printf "%s%s" "$pre_message" "$options_type")
-  fi
-
-  if [ -n "$options_scope" ]; then
-    if [ "$SQUEEZE_MESSAGE" = "y" ]; then
-      pre_message=$(printf "%s(%s)" "$pre_message" "$options_scope")
-    else
-      pre_message=$(printf "%s (%s)" "$pre_message" "$options_scope")
-    fi
-  fi
-
-  if [ -n "$delimiter" ]; then
-    if [ "$SQUEEZE_MESSAGE" = "y" ]; then
-      pre_message=$(printf "%s%s" "$pre_message" "$delimiter")
-    else
-      pre_message=$(printf "%s%s " "$pre_message" "$delimiter")
-    fi
-  fi
-
-  our_commit_params=$(printf "%s -m \"%s\"" "$pre_message" "$message" )
-
-  git_commit_string=$(printf "commit git %s %s" "$git_commit_params" "$our_commit_params")
+  if [ -n "$git_commit_params" ] || [ -n "$message" ]; then git_commit_string="git commit"; fi
+  if [ -n "$git_commit_params" ]; then git_commit_string="$git_commit_string$git_commit_params"; fi
+  if [ -n "$message" ]; then git_commit_string="$git_commit_string $message"; fi
 }
 
 
@@ -1344,7 +1395,6 @@ set_git_commit_string() {
 if [ "$ready_test" ]; then
   set_test_id() {
     # TESTING_ID will come from the test fixture
-    # shellcheck disable=SC2034
     test_id=$TESTING_ID
   }
 fi
@@ -1376,24 +1426,48 @@ run_stage_B() {
 }
 
 run_stage_C() {
-  ## Stage C: Git Commit String
-  #set_git_commit_string
-  #
-  #echo $git_commit_string
-  #if $debug_this; then
-  #  echo $git_commit_string
-  #fi
-  #
-  true
+  # Stage C: Git Commit String
+  set_git_commit_string
 }
 
-if [ -z "$test_only" ]; then
+run() {
   run_init
   run_stage_A_1 ${1+"$@"}
   run_stage_A_2
   run_stage_A_3
   run_stage_B
   run_stage_C
+
+  # shellcheck disable=SC2154
+  if [ -z "$test_only" ]; then
+
+    if $was_prompted; then
+      echo
+      echo "     $git_commit_string"
+      echo
+      # This is Posix so echo the char and wait for the enter key
+      read -r char
+      echo
+
+      # just in case they want to exit and don't know to press ctrl-C
+      if [ "$char" = "\x1B" ] || [ "$char" = "q" ] || [ "$char" = "n" ]; then
+        exit 0
+      fi
+    fi
+  else
+    echo "$git_commit_string"
+  fi
+}
+
+# >>>>>*<<<<<
+
+# shellcheck disable=SC2154
+if [ -z "$test_only" ]; then
+  # This is prevented from running during tests
+
+  run ${1+"$@"}
+
+  eval "$git_commit_string"
 fi
 
 # >>> End of Script <<<
