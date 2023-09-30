@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2034
 
 # Path of active commit type csv file
 COMMIT_CSV_FILE="commit_types.csv"
@@ -19,8 +20,8 @@ PROMPT_FOR_BODY="N"
 PROMPT_FOR_END="N"
 
 # Have no spaces between emoji, type, and description,
-# with delimiter either ":" or "!" not "!:"
-SQUEEZE_MESSAGE="Y"
+# with optional delimiter ":" if breaking or scope
+SQUEEZE_MESSAGE="N"
 
 # If flag is not valid: warn/error/ignore; warn
 # will re-prompt if message is over 50 chars
