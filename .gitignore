@@ -8,6 +8,7 @@ openide.bat
 
 # Nix
 .direnv/
+# To ignore flake.nix, flake.lock, .envrc, add to .git/info/exclude
 
 # Home Manager
 .config
