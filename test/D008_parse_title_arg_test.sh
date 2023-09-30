@@ -151,6 +151,24 @@ testParseIconTypeScopeDelimiterTitle_D008() {
   assertEquals "> $test : title equals \"$expected" "$expected" "$actual"
 }
 
+set_all_combinations() {
+  # Needs to be properly formatted;
+  # squeezed and no emoji tested elsewhere
+  all_combinations="🚨 hotfix: do something
+⚗️ wip: do something
+hotfix
+do something
+hotfix! Fix null ptr
+feat (Android): Add pinch zoom
+feat (Android) Add double tap zoom
+(ARM) Recode to avoid context switch
+! Fix incorrect use of API
+(Android)
+!
+:"
+}
+
+
 reconstitute() {
   distill_arg_1 "$1"
 
@@ -170,21 +188,33 @@ reconstitute() {
   unset outstr
 }
 
-testQuickReconstitute_D008() {
+testParseQuickRoundTrip_D008() {
   # shellcheck disable=SC2034
   test_only=true
 
-  assertEquals "🚨 hotfix: do something" "$(reconstitute "🚨 hotfix: do something")"
-  assertEquals "⚗️ wip: do something" "$(reconstitute "⚗️ wip: do something")"
-  assertEquals "hotfix" "$(reconstitute "hotfix")"
-  assertEquals "do something" "$(reconstitute "do something")"
-  assertEquals "hotfix! Fix null ptr" "$(reconstitute "hotfix! Fix null ptr")"
-  assertEquals "feat (Android): Add pinch zoom" "$(reconstitute "feat (Android): Add pinch zoom")"
-  assertEquals "feat (Android) Add double tap zoom" "$(reconstitute "feat (Android) Add double tap zoom")"
-  assertEquals "(Android)" "$(reconstitute "(Android)")"
-  assertEquals "!" "$(reconstitute "!")"
-  assertEquals ":" "$(reconstitute ":")"
+  set_all_combinations
+
+  echo "$all_combinations" | while IFS= read -r test_arg_1; do
+    assertEquals "$test_arg_1" "$(reconstitute "${test_arg_1}")"
+  done
 }
+
+testParseFullRoundTrip_D008() {
+  # shellcheck disable=SC2034
+  test_only=true
+
+  # shellcheck source=${PROJECT_ROOT}/commit.sh
+  . "$commit_sh"
+
+  set_all_combinations
+
+  echo "$all_combinations" | while IFS= read -r test_arg_1; do
+    actual="$(run "${test_arg_1}")"
+    expected="git commit -m \"$test_arg_1\""
+    assertEquals "$expected" "$actual"
+  done
+}
+
 
 # Load and run shUnit2.
 . shunit2
