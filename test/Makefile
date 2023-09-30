@@ -32,7 +32,10 @@ test:
 #	./E002_message_flag_prevents_message_prompt_test.sh
 #
 #	# G. Flags and Prompts
-#	./F001_breaking_and_prompt_test.sh
+#	./F001_breaking_flag_and_prompt_test.sh
+#	./F002_scope_flag_and_prompt_test.sh
+#	./F003_type_flag_and_prompt_test.sh
+#	./F004_message_flag_and_prompt_test.sh
 #
 #	# M. Miscellaneous
 
