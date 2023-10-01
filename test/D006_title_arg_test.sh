@@ -9,14 +9,20 @@ testTitleArg_D006() {
   # shellcheck source=${PROJECT_ROOT}/commit.sh
   . "$commit_sh"
 
+  test_arg_1="test: do something"
+
+  # First confirm parsing is working correctly
   run_init
-  run_stage_A_1 "do something"
+  run_stage_A_1 "${test_arg_1}"
+  run_stage_A_2
+  run_stage_A_3
 
   # shellcheck disable=SC2154
-  assertTrue "is_argument_1 is true" "$is_argument_1"
-  # shellcheck disable=SC2154
-  assertEquals "argument_1 equals \"do something\"" "$argument_1" "do something"
+  assertFalse "Should not be prompted" "$was_prompted"
 
+  actual="$(run "${test_arg_1}")"
+  expected="git commit -m \"$test_arg_1\""
+  assertEquals "$expected" "$actual"
 }
 
 # Load and run shUnit2.
