@@ -1187,47 +1187,47 @@ prompt_for_type() {
 
 prompt_for_missing_data() {
 
-  prompt_for_type=false
-  prompt_for_scope=false
-  prompt_for_breaking=false
-  prompt_for_title=false
-  prompt_for_body=false
-  prompt_for_end=false
+  is_prompt_for_type=false
+  is_prompt_for_scope=false
+  is_prompt_for_breaking=false
+  is_prompt_for_title=false
+  is_prompt_for_body=false
+  is_prompt_for_end=false
 
-  if [ -z "$flag_type" ] && [ -z "$arg_type" ]; then prompt_for_type=true; fi
+  if [ -z "$flag_type" ] && [ -z "$arg_type" ]; then is_prompt_for_type=true; fi
 
   if [ "$PROMPT_FOR_SCOPE" = "y" ]; then
-    if [ -z "$flag_scope" ] && [ -z "$arg_scope" ]; then prompt_for_scope=true; fi
+    if [ -z "$flag_scope" ] && [ -z "$arg_scope" ]; then is_prompt_for_scope=true; fi
   fi
 
   if [ "$PROMPT_FOR_BREAKING" = "y" ]; then
-    if ! $is_flag_breaking && [ -z "$arg_delimiter" ]; then prompt_for_breaking=true; fi
+    if ! $is_flag_breaking && [ -z "$arg_delimiter" ]; then is_prompt_for_breaking=true; fi
   fi
 
-  if [ -z "$flag_message" ] && [ -z "$arg_title" ]; then prompt_for_title=true; fi
+  if [ -z "$flag_message" ] && [ -z "$arg_title" ]; then is_prompt_for_title=true; fi
 
   if [ "$PROMPT_FOR_BODY" = "y" ]; then
     # Current no $flag_body
-    if [ -z "$arg_body" ]; then prompt_for_body=true; fi
+    if [ -z "$arg_body" ]; then is_prompt_for_body=true; fi
   fi
 
   if [ "$PROMPT_FOR_END" = "y" ]; then
     # Current no $flag_end
-    if [ -z "$arg_end" ]; then prompt_for_end=true; fi
+    if [ -z "$arg_end" ]; then is_prompt_for_end=true; fi
   fi
 
   # Only prompt if we don't have redirected input
   if [ -t 0 ]; then
-    if [ $prompt_for_type ]; then prompt_for_type; fi
-    if [ $prompt_for_scope ]; then prompt_for_scope; fi
-    if [ $prompt_for_breaking ]; then prompt_for_breaking; fi
-    if [ $prompt_for_title ]; then prompt_for_title; fi
-#    if [ $prompt_for_body ]; then true; fi  # TODO: Add body prompt
-#    if [ $prompt_for_end ]; then true; fi  # TODO: Add end prompt
+    if $is_prompt_for_type; then prompt_for_type; fi
+    if $is_prompt_for_scope; then prompt_for_scope; fi
+    if $is_prompt_for_breaking; then prompt_for_breaking; fi
+    if $is_prompt_for_title; then prompt_for_title; fi
+#    if $is_prompt_for_body; then true; fi  # TODO: Add body prompt
+#    if $is_prompt_for_end; then true; fi  # TODO: Add end prompt
 
-    if [ $prompt_for_type ] || [ $prompt_for_scope ] || \
-       [ $prompt_for_breaking ] || [ $prompt_for_title ] || \
-       [ $prompt_for_body ] || [ $prompt_for_end ]; then
+    if $is_prompt_for_type || $is_prompt_for_scope || \
+       $is_prompt_for_breaking || $is_prompt_for_title || \
+       $is_prompt_for_body || $is_prompt_for_end; then
       was_prompted=true
     fi
   fi
