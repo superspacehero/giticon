@@ -1,7 +1,7 @@
 test:
 	./_ready_for_testing.sh
 
-	# A. Configuration and Settings
+	# A. Setup
 	./A001_rcNotFound_test.sh
 	./A002_activeTable_test.sh
 
@@ -28,15 +28,20 @@ test:
 #	# E. Args and Prompting
 #
 #	# F. Flags and Args
-#	./E001_message_flag_and_arg_test.sh
-#	./E002_message_flag_prevents_message_prompt_test.sh
+#	./F001_message_flag_and_arg_test.sh
+#	./F002_message_flag_prevents_message_prompt_test.sh
+	./F003_type_flag_and_title_arg_test.sh
 #
 #	# G. Flags and Prompts
-#	./F001_breaking_flag_and_prompt_test.sh
-#	./F002_scope_flag_and_prompt_test.sh
-#	./F003_type_flag_and_prompt_test.sh
-#	./F004_message_flag_and_prompt_test.sh
+#	./G001_breaking_flag_and_prompt_test.sh
+#	./G002_scope_flag_and_prompt_test.sh
+#	./G003_type_flag_and_prompt_test.sh
+#	./G004_message_flag_and_prompt_test.sh
 #
+
+	# H. Configuration Options
+	./H001_execute_commit_test.sh
+
 #	# M. Miscellaneous
 
 	# U. Utilities and Helpers
