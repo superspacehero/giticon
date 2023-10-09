@@ -29,3 +29,6 @@ INVALID_FLAG_ACTION="warn"
 
 # Terminate if warning: Y/N
 TERMINATE_ON_WARNING="N"
+
+# Execute git commit: Y/N
+EXECUTE_COMMIT="Y"

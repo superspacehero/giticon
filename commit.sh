@@ -256,6 +256,7 @@ init_available_options() {
 #   RC_FILE_NAME
 #   SQUEEZE_MESSAGE
 #   TERMINATE_ON_WARNING
+#   EXECUTE_COMMIT
 #   VERSION
 #
 init_environment() {
@@ -305,6 +306,7 @@ init_environment() {
   if [ -z "$SQUEEZE_MESSAGE" ]; then SQUEEZE_MESSAGE="N"; fi
   if [ -z "$INVALID_FLAG_ACTION" ]; then INVALID_FLAG_ACTION="warn"; fi
   if [ -z "$TERMINATE_ON_WARNING" ]; then TERMINATE_ON_WARNING="Y"; fi
+  if [ -z "$EXECUTE_COMMIT" ]; then EXECUTE_COMMIT="Y"; fi
 
   ADD_EMOJI=$(echo $ADD_EMOJI | tr '[:upper:]' '[:lower:]')
   PROMPT_FOR_SCOPE=$(echo $PROMPT_FOR_SCOPE | tr '[:upper:]' '[:lower:]')
@@ -314,6 +316,7 @@ init_environment() {
   SQUEEZE_MESSAGE=$(echo $SQUEEZE_MESSAGE | tr '[:upper:]' '[:lower:]')
   INVALID_FLAG_ACTION=$(echo $INVALID_FLAG_ACTION | tr '[:upper:]' '[:lower:]')
   TERMINATE_ON_WARNING=$(echo $TERMINATE_ON_WARNING | tr '[:upper:]' '[:lower:]')
+  EXECUTE_COMMIT=$(echo $EXECUTE_COMMIT | tr '[:upper:]' '[:lower:]')
 }
 
 init_instruction_data() {
@@ -1453,6 +1456,8 @@ run() {
       if [ "$char" = "\x1B" ] || [ "$char" = "q" ] || [ "$char" = "n" ]; then
         exit 0
       fi
+    elif [ "$EXECUTE_COMMIT" = "n" ]; then
+      echo "$git_commit_string"
     fi
   else
     echo "$git_commit_string"
@@ -1467,7 +1472,9 @@ if [ -z "$test_only" ]; then
 
   run ${1+"$@"}
 
-  eval "$git_commit_string"
+  if [ "$EXECUTE_COMMIT" = "y" ]; then
+    eval "$git_commit_string"
+  fi
 fi
 
 # >>> End of Script <<<
