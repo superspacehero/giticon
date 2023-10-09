@@ -25,8 +25,8 @@ testTypeFlagAndTitleArg_F003() {
   SQUEEZE_MESSAGE="n"
   ADD_EMOJI="y"
 
-  actual="$(run --type feat "${test_arg_1}")"
-  expected="git commit -m \"✨ feat: $test_arg_1\""
+  actual="$(run --type fix "${test_arg_1}")"
+  expected="git commit -m \"✔️ fix: $test_arg_1\""
 
   SQUEEZE_MESSAGE=$temp_sq
   ADD_EMOJI=$temp_em
