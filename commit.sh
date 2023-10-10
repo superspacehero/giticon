@@ -266,23 +266,20 @@ init_environment() {
   # Attempt to get the project root directory using git
   git_output=$(git rev-parse --show-toplevel 2>/dev/null)
 
-  # Set the project root to either the project or PWD
-  if [ -n "$git_output" ]; then
-    PROJECT_ROOT="$git_output"
-  else
+  # For the rc file, favor the current directory so the project rc can be overridden
+  if [ -f "$PWD/$RC_FILE_NAME" ]; then
+    rc_file_path="$PWD/$RC_FILE_NAME"
     PROJECT_ROOT="$PWD"
-  fi
-
-  rc_file_path="$PROJECT_ROOT/$RC_FILE_NAME"
-
-  # Check for a .giticon.rc file
-  if [ -f "$rc_file_path" ]; then
-    # Load environment settings from the rc file
-    # shellcheck source=$PROJECT_ROOT/.giticon.rc
+    # shellcheck disable=SC1090
+    . "$rc_file_path"
+  elif [ -f "$git_output/$RC_FILE_NAME" ]; then
+    rc_file_path="$git_output/$RC_FILE_NAME"
+    PROJECT_ROOT="$git_output"
+    # shellcheck disable=SC1090
     . "$rc_file_path"
   else
     # Show an error and exit
-    echo "\e[31m\$ $RC_FILE_NAME not found in project root \e[0m"
+    echo "\e[31m\$ $RC_FILE_NAME not found in project root, $PROJECT_ROOT\e[0m"
     show_brief_help $ERROR_RC_NOT_FOUND
   fi
 
@@ -349,8 +346,7 @@ init_instruction_data() {
   message_title=""
   message_body=""
   message_end=""
-  git_commit_params=""
-  git_commit_string="" 
+  git_commit_string=""
 }
 
 # init_working_variables() will set:
@@ -777,6 +773,21 @@ is_flag() {
   fi
 }
 
+is_flag_and_param() {
+  # Parameters
+  p_param1=${1:-""}
+  p_param2=${2:-""}
+
+  if [ "${p_param1#-}" != "$p_param1" ] && [ "${p_param1#--}" = "$p_param1" ] && \
+     [ "${p_param2#-}" = "$p_param2" ] && [ "${p_param2#--}" = "$p_param2" ]; then
+    unset p_param1 p_param2
+    return 0
+  else
+    unset p_param1 p_param2
+    return 1
+  fi
+}
+
 is_git_option() {
   # Parameters
   p_parameter=${1:-"fff"}
@@ -788,12 +799,13 @@ is_git_option() {
     fi
   done
 
-  unset p_parameter
-
   # If any target item is found, break out of the loop
   if [ -n "$found" ]; then
+    unset p_parameter found
     return 0
   else
+    unset p_parameter found
+
     return 1
   fi
 }
@@ -919,20 +931,23 @@ parse_command_line() {
       *)
         if is_git_option "$1"; then
           git_commit_params="$git_commit_params $1"
+
+          if is_flag_and_param "$1" "$2"; then
+            shift
+            git_commit_params="$git_commit_params $1"
+          fi
         elif ! is_flag "$1"; then
-          if [ -z "$git_commit_params" ]; then
-            if ! $is_argument_1; then
-              is_argument_1=true
-              argument_1=$1
-            elif ! $is_argument_2; then
-              is_argument_2=true
-              argument_2=$1
-            elif ! $is_argument_3; then
-              is_argument_3=true
-              argument_3=$1
-            else
-              bad_commit_params="$bad_commit_params $1"
-            fi
+          if ! $is_argument_1; then
+            is_argument_1=true
+            argument_1=$1
+          elif ! $is_argument_2; then
+            is_argument_2=true
+            argument_2=$1
+          elif ! $is_argument_3; then
+            is_argument_3=true
+            argument_3=$1
+          else
+            bad_commit_params="$bad_commit_params $1"
           fi
         else
           bad_commit_params="$bad_commit_params $1"
@@ -1344,6 +1359,18 @@ consolidate_parsed_data() {
   if [ -z "$options_delimiter" ]; then
     if [ -n "$options_type" ] && [ -z "$options_scope" ] && [ -n "$message_title" ]; then
       options_delimiter=":"
+    fi
+  fi
+
+  # Set the icon if we have a type and ADD_EMOJI is wanted
+  if [ -z "$options_icon" ]; then
+    if [ -n "$options_type" ] && [ "$ADD_EMOJI" = "y" ]; then
+      set_table_row_number_from_type "$options_type"
+
+      if [ "$table_row_number" -gt 0 ]; then
+        set_commit_variables "$table_row_number"
+        options_icon="$commit_icon"
+      fi
     fi
   fi
 

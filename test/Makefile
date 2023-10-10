@@ -11,9 +11,11 @@ test:
 	./B003_show_types_param_test.sh
 	./B004_version_param_test.sh
 	./B005_breaking_param_test.sh
+	./B006_git_flags_test.sh
 
 	# C. Flags and Parameters
 	./C001_type_flag_and_param_test.sh
+	./C002_git_and_our_flags_test.sh
 
 	# D. Args
 	./D001_body_and_end_args_test.sh
