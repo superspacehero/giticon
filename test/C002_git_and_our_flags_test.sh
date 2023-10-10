@@ -13,9 +13,20 @@ testGitAndOurFlags_C002() {
   # shellcheck source=${PROJECT_ROOT}/commit.sh
   . "$commit_sh"
 
+  # Test our flag and git flags
+  unset flag_type git_commit_params
   run_init
-  run_stage_A_1 "--type feat --dry-run --amend"
+  run_stage_A_1 "--type" "feat" "--dry-run" "--amend"
 
+  assertContains "flag_type contains \"feat\"" "$flag_type" "feat"
+  assertContains "git params contain \"amend\"" "$git_commit_params" "amend"
+
+  # Test git flags and our flag
+  unset flag_type git_commit_params
+  run_init
+  run_stage_A_1  "--dry-run" "--type" "feat" "--amend"
+
+  assertContains "git params contains \"dry-run\"" "$git_commit_params" "dry-run"
   assertContains "flag_type contains \"feat\"" "$flag_type" "feat"
   assertContains "git params contain \"amend\"" "$git_commit_params" "amend"
 }
