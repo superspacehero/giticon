@@ -209,8 +209,27 @@ testParseFullRoundTrip_D008() {
   set_all_combinations
 
   echo "$all_combinations" | while IFS= read -r test_arg_1; do
-    actual="$(run "${test_arg_1}")"
+
+    run_init
+
+    temp_sq=$SQUEEZE_MESSAGE
+    temp_em=$ADD_EMOJI
+    SQUEEZE_MESSAGE="n"
+    ADD_EMOJI="n"
+
+    run_stage_A_1 "${test_arg_1}"
+    run_stage_A_2
+    run_stage_A_3
+    run_stage_B
+    run_stage_C
+
+    actual="$git_commit_string"
     expected="git commit -m \"$test_arg_1\""
+
+    SQUEEZE_MESSAGE=$temp_sq
+    ADD_EMOJI=$temp_em
+    unset temp_sq temp_em
+
     assertEquals "$expected" "$actual"
   done
 }
