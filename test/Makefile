@@ -40,7 +40,6 @@ test:
 #	./G003_type_flag_and_prompt_test.sh
 #	./G004_message_flag_and_prompt_test.sh
 #
-
 	# H. Configuration Options
 	./H001_execute_commit_y_test.sh
 	./H002_execute_commit_n_test.sh
