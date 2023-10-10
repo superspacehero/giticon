@@ -17,13 +17,17 @@ testGitFlagsB006() {
   unset git_commit_params
   run_init
   run_stage_A_1 "--amend"
-  assertContains "flag_type contains \"amend\"" "$git_commit_params" "amend"
+  assertContains "git params contain \"amend\"" "$git_commit_params" "amend"
 
   # Test two args
   unset git_commit_params
   run_init
-  run_stage_A_1 "--amend --dry-run"
-  assertContains "flag_type contains \"amend\"" "$git_commit_params" "amend"
+  run_stage_A_1 "--amend" "--dry-run"
+  assertContains "git params contain \"amend\"" "$git_commit_params" "amend"
+  assertContains "git params contain \"dry-run\"" "$git_commit_params" "dry-run"
+
+  # Testing every git commit parameter here, in this manner, will not confirm
+  # that our list is correct.
 }
 
 # Load and run shUnit2.
