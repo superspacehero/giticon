@@ -42,7 +42,8 @@ test:
 #
 
 	# H. Configuration Options
-	./H001_execute_commit_test.sh
+	./H001_execute_commit_y_test.sh
+	./H002_execute_commit_n_test.sh
 
 #	# M. Miscellaneous
 
