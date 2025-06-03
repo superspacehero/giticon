@@ -553,8 +553,12 @@ set_formatted_commit_row() {
           echo "$padded_index,$commit_type,$commit_icon,$commit_desc" |
           awk -F, -v c1="$width_of_index" -v c2="$width_of_type" -v c3="$width_of_icon" '
               {
-                  printf "%" c1 "s%-" c2 "s%-" c3 "s\t%s\n", $1, $2, $3, $4
-                  #       1       2        3          4
+                # Description may have commas so combine them  
+                desc = $4
+                for (i=5; i<=NF; i++) desc = desc "," $i
+                
+                printf "%" c1 "s%-" c2 "s%-" c3 "s\t%s\n", $1, $2, $3, desc
+                #       1       2        3          desc
               }
           '
       )
@@ -563,8 +567,12 @@ set_formatted_commit_row() {
           echo "$padded_index,$commit_type,$commit_desc" |
           awk -F, -v c1="$width_of_index" -v c2="$width_of_type" '
               {
-                  printf "%" c1 "s%-" c2 "s\t%s\n", $1, $2, $3
-                  #       1       2          3
+                # Description may have commas so combine them  
+                desc = $3
+                for (i=5; i<=NF; i++) desc = desc "," $i
+
+                printf "%" c1 "s%-" c2 "s\t%s\n", $1, $2, desc
+                #       1       2          3
               }
           '
       )
@@ -575,8 +583,12 @@ set_formatted_commit_row() {
           echo "$padded_index,$commit_type,$commit_icon,$commit_desc" |
           awk -F, -v c2="$width_of_type" -v c3="$width_of_icon" '
               {
-                  printf "%-" c2 "s%-" c3 "s\t%s\n", $2, $3, $4
-                  #       2        3          4
+                # Description may have commas so combine them  
+                desc = $4
+                for (i=5; i<=NF; i++) desc = desc "," $i
+                
+                printf "%-" c2 "s%-" c3 "s\t%s\n", $2, $3, desc
+                #       2        3          desc
               }
           '
       )
@@ -585,8 +597,12 @@ set_formatted_commit_row() {
           echo "$padded_index,$commit_type,$commit_desc" |
           awk -F, -v c2="$width_of_type" '
               {
-                  printf "%-" c2 "s\t%s\n", $2, $3
-                  #       2          3
+                # Description may have commas so combine them  
+                desc = $3
+                for (i=5; i<=NF; i++) desc = desc "," $i
+                
+                printf "%-" c2 "s\t%s\n", $2, desc
+                #       2          desc
               }
           '
       )
