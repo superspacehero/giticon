@@ -1,7 +1,7 @@
 Type,Icon,Description
-fail,🟥,Add a failing test (note Test-ID)
-pass,🟩,Add code to get a passing test (note Test-ID)
-tweak,🟦,Improve test code itself or related program code (note Test-ID)
+fail,🟥,"Add a failing test (note Test-ID)"
+pass,🟩,"Add code to get a passing test (note Test-ID)"
+tweak,🟦,"Improve test code itself or related program code (note Test-ID)"
 access,♿,"Improvement for accessibility"
 api,❗,"API addition, deprecation, or deletion"
 asset,📸,"Add or update assets"
