@@ -1,4 +1,7 @@
 Type,Icon,Description
+fail,🟥,Add a failing test (note Test-ID)
+pass,🟩,Add code to get a passing test (note Test-ID)
+tweak,🟦,Improve test code itself or related program code (note Test-ID)
 access,♿,"Improvement for accessibility"
 api,❗,"API addition, deprecation, or deletion"
 asset,📸,"Add or update assets"
@@ -9,7 +12,7 @@ data,🗃️,"Add or update a Dataset"
 doc,📝,"Documentation changes including source comments"
 extern,👽️,"Update due to external API or other changes"
 feat,✨,"A new feature"
-fix,✔️,"Fix a bug or get a test working"
+fix,✔️,"Fix a bug or test that started failing"
 git,🙈,"A change to the .gitignore / .gitkeep files, or other git changes"
 hotfix,🚨,"Critical hotfix"
 i18n,🌐,"Internationalization and localization"
